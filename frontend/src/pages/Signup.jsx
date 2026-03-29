@@ -5,7 +5,7 @@ function Signup() {
     const [password, setPassword] = useState("");
 
     // The handleSignup function is called when the user submits the signup form. It takes an event object as an argument, which we can use to prevent the default behavior of the form submission.
-    const handleSignup = async (e) => {
+    async function handleSignup(e) {
         e.preventDefault();
 
         try {

@@ -1,12 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 # CORS is used to allow cross-origin requests from the frontend
 import sqlite3
 import os   # for file path handling
 
-
 app = Flask(__name__)
-CORS(app)
+app.secret_key = "verysecretkey"
+CORS(app, supports_credentials=True)
 # CORS(app) allows the frontend (which may be running on a different port) to make requests to this Flask backend without being blocked by the browser's same-origin policy.
 # same origin policy: A security measure implemented by web browsers that restricts web pages from making requests to a different domain than the one that served the web page. This is done to prevent malicious websites from accessing sensitive data on other domains.
 
@@ -46,6 +46,9 @@ def login():
     conn.close()
 
     if user:
+        session["user_id"] = user["uid"]  # Store the user's ID in the session to keep them logged in across requests
+        session["username"] = user["user_name"]  # Store the username in the session for easy access in future requests
+        
         return jsonify({
             "success": True,
             "message": "Login successful",
@@ -99,6 +102,23 @@ def signup():
         "message": "Signup successful"
     }), 201
 
+
+# This route allows the frontend to check if the user is currently logged in by looking for the "user_id" in the session. If it exists, it returns a JSON response indicating that the user is logged in along with their username. If not, it returns a response indicating that the user is not logged in.
+@app.route("/api/me" , methods=["GET"])
+def get_current_user():
+    if "user_id" in session:
+        return jsonify({
+            "logged_in": True,
+            "username": session["username"]
+        }), 200
+    return jsonify({
+        "logged_in": False
+    }), 200
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    session.clear()  # Clear the session to log the user out by removing all stored data, including the user_id and username.
+    return jsonify({"message": "Logged out successfully."})
 
 if __name__ == "__main__":
     app.run(debug=True)

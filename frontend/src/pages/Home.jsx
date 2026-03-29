@@ -1,14 +1,49 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Home() {
+    const [user, setUser] = useState(null);
+
+    // Store the session in the react state
+    useEffect(() => {
+        fetch("http://127.0.0.1:5000/api/me", {
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("SESSION:", data);
+            if (data.logged_in) {
+              setUser(data.username);
+            }
+          })
+          .catch(err => console.error(err));
+      }, []);
     return (
         <div className="home-page">
             <nav className="navbar">
                 <div className="logo">The Notes Specialist</div>
 
                 <div className="nav-links">
-                    <Link to="/login" className="nav-btn login-btn">Login</Link>
-                    <Link to="/signup" className="nav-btn signup-btn">Sign Up</Link>
+                    {user ? (
+                        <>
+                        <span>Welcome, {user}</span>
+
+                        <button
+                            onClick={async () => {
+                                await fetch("http://127.0.0.1:5000/api/logout", {
+                                    method: "POST",
+                                    credentials: "include",
+                                });
+                                setUser(null);
+                            }}
+                        >Logout</button>
+                    </>
+                    ) : (
+                        <>
+                            <Link to="/login">Login</Link>
+                            <Link to="/signup">Sign Up</Link>
+                        </>
+                    )}
                 </div>
             </nav>
 
@@ -28,5 +63,6 @@ function Home() {
             </section>
         </div>
     );
+    
 }
 export default Home;
