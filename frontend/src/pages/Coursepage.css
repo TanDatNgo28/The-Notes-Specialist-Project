@@ -1,0 +1,97 @@
+.course-page {
+    min-height: 100vh;
+    background-color: #4b001f;
+}
+
+.course-navbar {
+    background: #ffffff;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.course-navbar h1 {
+    font-size: 35px;
+    color: #4b001f;
+    margin: 0;
+}
+
+.course-content {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.course-content h2 {
+    font-size: 25px;
+    color: white;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+}
+
+.chapter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chapter-item {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 16px 20px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chapter-item:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(4px);
+}
+
+.no-chapters {
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+}
+
+.add-chapter-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.add-chapter-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    outline: none;
+}
+
+.add-chapter-form button {
+    padding: 12px 20px;
+    background: white;
+    color: #4b001f;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.add-chapter-form button:hover {
+    opacity: 0.85;
+}
