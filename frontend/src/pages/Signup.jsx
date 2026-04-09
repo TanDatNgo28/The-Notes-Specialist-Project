@@ -1,56 +1,63 @@
-import { useState } from "react";
+import {useState, useContext} from "react";
+import {useNavigate} from "react-router-dom";
+import {AuthContext} from "./AuthContext"; // For authentication state
+import "./Signup.css";
 
 function Signup() {
+    const {setUser} = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-    // The handleSignup function is called when the user submits the signup form. It takes an event object as an argument, which we can use to prevent the default behavior of the form submission.
+    // The handleSignup function is called when the user submits the signup form
     async function handleSignup(e) {
         e.preventDefault();
-
         try {
             const response = await fetch("http://127.0.0.1:5000/api/signup", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({username, password}),
             });
             const data = await response.json();
             console.log(data.message);
             alert(data.message);
-        } catch (error) {
+
+            if (data.success) {
+                setUser({ username });
+                navigate("/");
+            }
+        } 
+        catch (error) {
             console.error("Signup error:", error);
         }
     };
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-
-            <form onSubmit={handleSignup}>
+        <div className="signup-container">
+            <h1 className="signup-form h1">Sign Up</h1>
+            <form className="signup-form" onSubmit={handleSignup}>
                 <input
                     type="text"
                     placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
-
                 <br /><br />
-
                 <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-
                 <br /><br />
-
-                <button type="submit">Create Account</button>
+                <button className="signup-form button" type="submit">Create Account</button>
             </form>
         </div>
     );
 }
-// This line exports the Signup component as the default export of this module. This allows other parts of the application to import and use the Signup component when needed.
+// This line exports the Signup component as the default export of this module
+// This allows other parts of the application to import and use the Signup component when needed
 export default Signup;
