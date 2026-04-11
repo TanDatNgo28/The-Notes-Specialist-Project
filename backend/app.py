@@ -141,18 +141,22 @@ def logout():
 # This route allows the frontend to check the input course code from the search bar
 @app.route("/api/search")
 def search():
-    query = request.args.get("q")
+    query = request.args.get("q", "").strip()
+
     if not query:
         return jsonify([])
-    
+
     conn = get_db_connection()
-    course = conn.execute(
-        "SELECT * FROM courses WHERE course_code LIKE ?",
-        ('%' + query + '%',)
+    courses = conn.execute(
+        """
+        SELECT * FROM courses
+        WHERE LOWER(course_code) LIKE LOWER(?)
+        """,
+        (f"%{query}%",)
     ).fetchall()
     conn.close()
-    
-    return [dict(row) for row in course]
+
+    return jsonify([dict(row) for row in courses])
 
 # This route allows the user to add a new course
 @app.route("/api/add_course", methods=["POST"])
@@ -274,9 +278,15 @@ def get_notes(chid):
 @app.route("/api/chapters/<int:chid>/upload", methods=["POST"])
 def upload(chid):
     username = session.get("username")
+    # Read status of the notes
+    status = request.form.get("status", "incomplete")
     # Check if the user is logged in
     if not username:
         return jsonify({"success": False, "message": "Not logged in"}), 401
+    # Validate status
+    if status not in ["complete", "incomplete"]:
+        status = "incomplete"
+
     # Check if there is a file attached
     if "file" not in request.files:
         return jsonify({"success": False, "message": "No file provided"}), 400
@@ -298,8 +308,8 @@ def upload(chid):
         uid = user["uid"]
     else: None
 
-    cur.execute("INSERT INTO notes (chid, filename, mimetype, size, data, creator) VALUES (?, ?, ?, ?, ?, ?)",
-                (chid, file.filename, file.mimetype, size, data, uid)
+    cur.execute("INSERT INTO notes (chid, filename, mimetype, size, data, creator, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (chid, file.filename, file.mimetype, size, data, uid, status)
     )
 
     conn.commit()
@@ -324,6 +334,32 @@ def download(nid):
         as_attachment = True,
         download_name = note["filename"]
     )
+
+@app.route("/api/my-notes")
+def my_notes():
+    if "user_id" not in session:
+        return jsonify({"message": "Not logged in"}), 401
+
+    conn = get_db_connection()
+
+    notes = conn.execute("""
+        SELECT 
+            notes.nid,
+            notes.filename,
+            notes.status,
+            notes.date,
+            chapters.chapter_name,
+            courses.course_code
+        FROM notes
+        LEFT JOIN chapters ON notes.chid = chapters.chid
+        LEFT JOIN courses ON chapters.cid = courses.cid
+        WHERE notes.creator = ?
+        ORDER BY notes.date DESC
+    """, (session["user_id"],)).fetchall()
+
+    conn.close()
+
+    return jsonify([dict(row) for row in notes])
 
 if __name__ == "__main__":
     app.run(debug=True)

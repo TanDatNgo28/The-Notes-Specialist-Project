@@ -1,0 +1,39 @@
+.my-notes-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #5c0029, #2d0015);
+    color: white;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.my-notes-page h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+.my-notes-list {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    gap: 20px;
+}
+
+.note-card {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(8px);
+}
+
+.note-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: white;
+}
+
+.note-card p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.92);
+}

@@ -38,25 +38,27 @@ function Login() {
     }; 
 
     return (
-        <div className="login-container">
-            <h1 className="login-form h1">Log In</h1>
-            <form className="login-form" onSubmit={handleLogin}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <br /><br />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                /> 
-                <br /><br />
-                <button className="login-form button" type="submit">Login</button>
-            </form>
+        <div className="app-background">
+            <div className="login-container">
+                <h1 className="login-form h1" style={{ color: "black" }}>Log In</h1>
+                <form className="login-form" onSubmit={handleLogin}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <br /><br />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    /> 
+                    <br /><br />
+                    <button className="login-form button" type="submit">Login</button>
+                </form>
+            </div>
         </div>
     );
 }

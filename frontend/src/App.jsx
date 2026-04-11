@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Coursepage from "./pages/Coursepage";
 import Chapterpage from "./pages/Chapterpage";
+import MyNotes from "./pages/MyNotes";
 import "./App.css";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/courses/:cid" element={<Coursepage />} />
             <Route path="/chapters/:chid" element={<Chapterpage />} />
+            <Route path="/my-notes" element={<MyNotes />} />
         </Routes>
     );
 }

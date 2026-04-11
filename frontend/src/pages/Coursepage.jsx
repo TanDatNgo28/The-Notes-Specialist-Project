@@ -1,5 +1,6 @@
 import {useParams, useNavigate} from "react-router-dom";
 import {useEffect, useState, useContext} from "react";
+import Navbar from "./Navbar";
 import {AuthContext} from "./AuthContext"; // For authentication state
 import "./Coursepage.css"
 
@@ -52,9 +53,7 @@ function Coursepage() {
 
     return (
         <div className="course-page">
-            <nav className="course-navbar">
-                <h1>{course ? course.course_code : "Loading..."}</h1>
-            </nav>
+            <Navbar />
 
             <div className="course-content">
                 <h2>Chapters</h2>

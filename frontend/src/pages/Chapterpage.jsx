@@ -1,5 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState, useContext} from "react";
+import Navbar from "./Navbar";
 import {AuthContext} from "./AuthContext"; // For authentication state
 import {Document, Page, pdfjs} from "react-pdf" // For rendering the page to allow previewing
 
@@ -18,6 +19,7 @@ function Chapterpage() {
     const [chapter, setChapter] = useState(null);
     const [notes, setNotes] = useState([]);
     const [file, setFile] = useState(null);
+    const [status, setStatus] = useState("incomplete");
     const [course, setCourse] = useState(null);
     // For previewing the notes
     const [previewNid, setPreviewNid] = useState(null);
@@ -52,6 +54,7 @@ function Chapterpage() {
         if (!file) return alert("Please select a PDF file");
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("status", status);
         try {
             const res = await fetch(`http://127.0.0.1:5000/api/chapters/${chid}/upload`, {
                 method: "POST",
@@ -74,11 +77,7 @@ function Chapterpage() {
 
     return (
         <div className="chapter-page">
-            <nav className="chapter-navbar">
-                <h1 className="chapter-title">
-                    {course && chapter ? `${course.course_code} - ${chapter.chapter_name}` : "Loading..."}
-                </h1>
-            </nav>
+            <Navbar />
 
             <div className="chapter-content">
                 <h2>Notes</h2>
@@ -88,16 +87,22 @@ function Chapterpage() {
                     <ul className="notes-list">
                         {notes.map(note => (
                             <li className="note-item" key={note.nid}>
-                                <span>📗 {note.filename} ({(note.size / 1024).toFixed(1)} KB)</span>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                    <button className="preview-btn" onClick={() => setPreviewNid(note.nid)}>Preview</button>
-                                    <a href={`http://127.0.0.1:5000/api/notes/${note.nid}/download`}
-                                        target="_blank" rel="noreferrer"
-                                    >
-                                        <u> Click here to download</u>
-                                    </a>
-                                </div>
-                            </li>
+                            <span>
+                                📗 {note.filename} ({(note.size / 1024).toFixed(1)} KB)
+                            </span>
+                            <p className={`note-status ${note.status}`}>
+                                Status: {note.status}
+                            </p>
+                        
+                            <div style={{ display: "flex", gap: "10px" }}>
+                                <button className="preview-btn" onClick={() => setPreviewNid(note.nid)}>Preview</button>
+                                <a href={`http://127.0.0.1:5000/api/notes/${note.nid}/download`}
+                                    target="_blank" rel="noreferrer"
+                                >
+                                    <u> Click here to download</u>
+                                </a>
+                            </div>
+                        </li>
                         ))}
                     </ul>
                 )}
@@ -108,6 +113,11 @@ function Chapterpage() {
                             accept = "application/pdf"
                             onChange = {(e) => setFile(e.target.files[0])}
                         />
+                        <label>Status:</label>
+                        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                            <option value="incomplete">Incomplete</option>
+                            <option value="complete">Complete</option>
+                        </select>
                         <button type="submit">Upload Notes</button>
                     </form>
                 )}
